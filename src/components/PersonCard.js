@@ -15,7 +15,7 @@ const PersonCard = ({ person }) => {
     const [image, setImage] = useState(person.image);
 
     const handleImageUpload = (event) => {
-        const file = event.target.file[0];
+        const file = event.target.files[0];
         if (file) {
             const imageURL = URL.createObjectURL(file);
             setImage(imageURL);

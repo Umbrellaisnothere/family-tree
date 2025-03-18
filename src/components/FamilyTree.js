@@ -1,14 +1,9 @@
-// 
-
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import PersonCard from "./PersonCard";
+import "./FamilyTree.css";
 
-const FamilyTree = ({ family, isRoot = true }) => {
+const FamilyTree = ({ family = [], isRoot = true }) => {
     const [tree, setTree] = useState(family);
-
-    useEffect(() => {
-        setTree(family);
-    }, [family]);
 
     const addChild = (parentId) => {
         const newChild = {
@@ -19,7 +14,7 @@ const FamilyTree = ({ family, isRoot = true }) => {
             children: []
         };
 
-        const updateTree = (nodes = []) => 
+        const updateTree = (nodes) => 
             nodes.map(node => {
                 if (node.id === parentId) {
                     return { ...node, children: [...node.children, newChild] };
@@ -27,14 +22,14 @@ const FamilyTree = ({ family, isRoot = true }) => {
                 return { ...node, children: updateTree(node.children || []) };
             });
 
-        setTree(prevTree => updateTree(prevTree || []));
+        setTree(updateTree(tree));
     };
 
     return (
         <div className="p-6 bg-white rounded-lg shadow-md">
             {isRoot && <h1 className="text-2xl font-bold text-center mb-4">Ancestral Tree</h1>}
             <div className="space-y-4">
-                {tree.map((person) => (
+                {tree.length > 0 ? (tree.map((person) => (
                     <div key={person.id} className="ml-6 border-l-2 border-gray-300 pl-4">
                         <PersonCard person={person} />
 
@@ -48,9 +43,12 @@ const FamilyTree = ({ family, isRoot = true }) => {
                             <FamilyTree family={person.children} isRoot={false} />
                         )}
                     </div>
-                ))}
-            </div>
+                ))
+            ) : (
+                <p className="text-center text-gray-500">No data available</p>
+            )}
         </div>
+    </div>
     );
 };
 

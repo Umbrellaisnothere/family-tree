@@ -5,7 +5,7 @@ import './index.css';
 
 function App() {
     return (
-        <div className = "min-h-screen bg-gray-200 flex items-center justify-center">
+        <div className = "app-container">
             <FamilyTree />
         </div>
 
