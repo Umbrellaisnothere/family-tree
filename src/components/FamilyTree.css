@@ -1,0 +1,50 @@
+.family-node {
+    position: relative;
+    display: flex;
+    padding-top: 20px;
+    flex-direction: column;
+    align-items: center;
+}
+
+.family-node::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 2px;
+    height: 20px;
+    background-color: #a0aec0;
+    /* transform: translateX(-50%); */
+}
+
+.family-children {
+    display: flex;
+    position: relative;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.family-children::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: #a0aec0;
+}
+
+.family-children > div {
+    margin: 0 10px;
+    position: relative;
+}
+
+.family-children > div::before {
+    content: '';
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    width: 2px;
+    height: 20px;
+    background-color: #a0aec0;
+}

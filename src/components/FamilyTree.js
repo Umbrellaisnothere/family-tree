@@ -30,7 +30,7 @@ const FamilyTree = ({ family = [], isRoot = true }) => {
             {isRoot && <h1 className="text-2xl font-bold text-center mb-4">Ancestral Tree</h1>}
             <div className="space-y-4">
                 {tree.length > 0 ? (tree.map((person) => (
-                    <div key={person.id} className="ml-6 border-l-2 border-gray-300 pl-4">
+                    <div key={person.id} className="family-node">
                         <PersonCard person={person} />
 
                         <button
@@ -40,7 +40,13 @@ const FamilyTree = ({ family = [], isRoot = true }) => {
                         </button>
 
                         {person.children && person.children.length > 0 && (
-                            <FamilyTree family={person.children} isRoot={false} />
+                            <div className="family-children">
+                                {person.children.map((child) => (
+                                    <div key={child.id}>
+                            <FamilyTree family={[child]} isRoot={false} />
+                    </div>
+                ))}
+                </div>
                         )}
                     </div>
                 ))
