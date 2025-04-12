@@ -37,25 +37,25 @@ const FamilyTree = ({ isRoot = true }) => {
     };
 
     return (
-        <div className="p-6 bg-white rounded-lg shadow-md">
-            {isRoot && <h1 className="text-2xl font-bold text-center mb-4">Ancestral Tree</h1>}
-            <div className="space-y-4">
-                {Array.isArray(tree) && tree.length > 0 ? (tree.map((person) => (
-                    <div key={person.id} className="family-node">
-                        <PersonCard person={person} />
+        <div className="family-tree-container">
+    {isRoot && <h1 className="family-tree-header">Ancestral Tree</h1>}
+    <div className="family-tree">
+        {Array.isArray(tree) && tree.length > 0 ? (tree.map((person) => (
+            <div key={person.id} className="family-node">
+                <PersonCard person={person} />
 
-                        <button
-                            onClick={() => addChild(person.id)}
-                            className="mt-2 px-3 py-1 bg-blue-500 text-white rounded">
-                            ➕
-                        </button>
+                <button
+                    onClick={() => addChild(person.id)}
+                    className="add-child-btn">
+                    ➕
+                </button>
 
-                        {person.children && person.children.length > 0 && (
-                            <div className="family-children">
-                                {person.children.map((child) => (
-                                    <div key={child.id}>
-                            <FamilyTree family={[child]} isRoot={false} />
-                    </div>
+                {person.children && person.children.length > 0 && (
+                    <div className="family-children">
+                        {person.children.map((child) => (
+                            <div key={child.id}>
+                                <FamilyTree family={[child]} isRoot={false} />
+                            </div>
                 ))}
                 </div>
                         )}

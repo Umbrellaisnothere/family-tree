@@ -1,4 +1,5 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
+import './PersonCard.css';
 
 const calculateAge = (birthDate, deathDate) => {
     const birth = new Date(birthDate);
@@ -23,24 +24,20 @@ const PersonCard = ({ person }) => {
     };
 
     return (
-        <div className = "flex items-center border border-gray-300 p-4 rounded-lg bg-gray-100 shadow-md space-x-4">
-            <img 
-            src = {image} 
-            alt = {person.name} 
-            className = "w-20 h-20 rounded-full object-cover" />
-            <div>
-                <h2 className = "font-semibold text-lg">{person.name}</h2>
-
-                <p className = "text-sm text-gray-600">Born: {person.birthDate}</p>
-                {person.deathDate ? (
-                    <p className = "text-sm text-red-500">Died: {person.deathDate}</p>
-                ) : (
-                <p className = "text-sm text-blue-500">Age: {calculateAge(person.birthDate, person.deathDate)}</p>
-                )}
-                <input type="file" accept="image/*" onChange={handleImageUpload} className="mt-2 text-sm"/>
-            </div>
+        <div className="person-card">
+          <img src={image} alt={person.name} />
+          <div>
+            <h2>{person.name}</h2>
+            <p>Born: {person.birthDate}</p>
+            {person.deathDate ? (
+              <p className="death">Died: {person.deathDate}</p>
+            ) : (
+              <p className="age">Age: {calculateAge(person.birthDate, person.deathDate)}</p>
+            )}
+            <input type="file" accept="image/*" onChange={handleImageUpload} />
+          </div>
         </div>
-    )
-};
+      );
+    };
 
 export default PersonCard;

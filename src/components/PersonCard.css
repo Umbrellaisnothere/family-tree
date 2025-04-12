@@ -1,0 +1,46 @@
+.person-card {
+    display: flex;
+    align-items: center;
+    border: 1px solid #d1d5db;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    background-color: #f7fafc;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+    gap: 1rem;
+}
+
+.person-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+}
+
+.person-card img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+}
+
+.person-card h2 {
+    font-size: 1.125rem;
+    font-weight: 600;
+  }
+  
+  .person-card p {
+    font-size: 0.875rem;
+    color: #4a5568;
+  }
+  
+  .person-card .age {
+    color: #4299e1;
+  }
+  
+  .person-card .death {
+    color: #f56565;
+  }
+  
+  .person-card input[type="file"] {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+  }
