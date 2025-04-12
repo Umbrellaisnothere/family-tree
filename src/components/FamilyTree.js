@@ -1,9 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PersonCard from "./PersonCard";
 import "./FamilyTree.css";
 
-const FamilyTree = ({ family = [], isRoot = true }) => {
-    const [tree, setTree] = useState(family);
+const FamilyTree = ({ isRoot = true }) => {
+    const [tree, setTree] = useState([]);
+
+    useEffect(() => {
+        fetch('http://localhost:5000/api/family')
+            .then(res => res.json())
+            .then(data => setTree(data))
+            .catch(err => console.error('Error fetching family:', err));
+    }, []);
 
     const addChild = (parentId) => {
         const newChild = {
@@ -29,7 +36,7 @@ const FamilyTree = ({ family = [], isRoot = true }) => {
         <div className="p-6 bg-white rounded-lg shadow-md">
             {isRoot && <h1 className="text-2xl font-bold text-center mb-4">Ancestral Tree</h1>}
             <div className="space-y-4">
-                {tree.length > 0 ? (tree.map((person) => (
+                {Array.isArray(tree) && tree.length > 0 ? (tree.map((person) => (
                     <div key={person.id} className="family-node">
                         <PersonCard person={person} />
 
