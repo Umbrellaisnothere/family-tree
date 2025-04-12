@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { buildFamilyTree } from "../utilities/buildFamilyTree";
 import PersonCard from "./PersonCard";
 import "./FamilyTree.css";
 
@@ -8,7 +9,10 @@ const FamilyTree = ({ isRoot = true }) => {
     useEffect(() => {
         fetch('http://localhost:5000/api/family')
             .then(res => res.json())
-            .then(data => setTree(data))
+            .then(data => {
+                const treeData =buildFamilyTree(data);
+                setTree(treeData);
+            })
             .catch(err => console.error('Error fetching family:', err));
     }, []);
 
