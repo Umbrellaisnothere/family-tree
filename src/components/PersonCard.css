@@ -1,46 +1,75 @@
 .person-card {
-    display: flex;
-    align-items: center;
-    border: 1px solid #d1d5db;
-    padding: 1rem;
-    border-radius: 0.5rem;
-    background-color: #f7fafc;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    cursor: pointer;
-    gap: 1rem;
+  font-family: 'Poppins', sans-serif;
+  background-color: #f7fafc;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  padding: 16px;
+  max-width: 300px;
+  text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .person-card:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  transform: scale(1.05);
 }
 
-.person-card img {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
+.person-image {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin-bottom: 12px;
 }
 
-.person-card h2 {
-    font-size: 1.125rem;
-    font-weight: 600;
+.person-name {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 4px;
   }
   
-  .person-card p {
-    font-size: 0.875rem;
-    color: #4a5568;
-  }
+.person-details {
+  color: #4a4e57;
+  font-size: 0.875rem;
+}
   
-  .person-card .age {
-    color: #4299e1;
-  }
+.person-card .death {
+ color: #f56565;
+}
+
+.card-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.card-btn {
+  flex: 1;
+  padding: 6px;
+  font-size: 0.85rem;
+  color: white;
+  background-color: #52515f;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.card-btn:hover {
+  background-color: #696777;
+}
+
+.card-btn.delete {
+  background-color: #ef4444;
+}
+
+.card-btn.delete:hover {
+  background-color: #dc2626;
+}
   
-  .person-card .death {
-    color: #f56565;
-  }
-  
-  .person-card input[type="file"] {
-    margin-top: 0.5rem;
-    font-size: 0.875rem;
-  }
+.person-card input[type="file"] {
+margin-top: 0.5rem; 
+font-size: 0.875rem;
+}

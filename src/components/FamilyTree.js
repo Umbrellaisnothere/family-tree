@@ -35,6 +35,17 @@ const FamilyTree = ({ isRoot = true }) => {
 
         setTree(updateTree(tree));
     };
+        
+        const deletePerson = (idToDelete) => {
+            const removeNode = (nodes) => 
+                nodes
+            .filter(node => node.id !== idToDelete)
+            .map(node => ({
+                ...node,
+                children: removeNode(node.children || [])}));
+                
+        setTree(removeNode(tree));
+    }
 
     return (
         <div className="family-tree-container">
@@ -42,13 +53,9 @@ const FamilyTree = ({ isRoot = true }) => {
     <div className="family-tree">
         {Array.isArray(tree) && tree.length > 0 ? (tree.map((person) => (
             <div key={person.id} className="family-node">
-                <PersonCard person={person} />
-
-                <button
-                    onClick={() => addChild(person.id)}
-                    className="add-child-btn">
-                    ➕
-                </button>
+                <PersonCard person={person} 
+                onAddChild={() => addChild(person.id)}
+                onDelete={() => deletePerson(person.id)}/>
 
                 {person.children && person.children.length > 0 && (
                     <div className="family-children">
