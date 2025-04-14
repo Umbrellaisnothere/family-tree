@@ -3,18 +3,20 @@ import { buildFamilyTree } from "../utilities/buildFamilyTree";
 import PersonCard from "./PersonCard";
 import "./FamilyTree.css";
 
-const FamilyTree = ({ isRoot = true }) => {
+const FamilyTree = ({ family = [], isRoot = true }) => {
     const [tree, setTree] = useState([]);
 
     useEffect(() => {
-        fetch('http://localhost:5000/api/family')
-            .then(res => res.json())
-            .then(data => {
-                const treeData =buildFamilyTree(data);
-                setTree(treeData);
-            })
-            .catch(err => console.error('Error fetching family:', err));
-    }, []);
+        if (isRoot) {
+            fetch('http://localhost:5000/api/family')
+                .then(res => res.json())
+                .then(data => {
+                    const treeData = buildFamilyTree(data);
+                    setTree(treeData);
+                })
+                .catch(err => console.error('Error fetching family:', err));
+            }
+    }, [isRoot]);
 
     const addChild = async (parentId) => {
         try {
@@ -36,25 +38,23 @@ const FamilyTree = ({ isRoot = true }) => {
         const newChild = await response.json();
 
         const updateTree = (nodes) => 
-            nodes.map(node => {
-                if (node.id === parentId) {
-                    return { ...node, children: [...node.children, newChild] };
-                } 
-                return { ...node, children: updateTree(node.children || []) };
-            });
+            nodes.map((node) =>
+                node.id === parentId
+                    ? { ...node, children: [...(node.children || []), newChild] }  
+                    : { ...node, children: updateTree(node.children || []) }
+            );
 
         setTree(updateTree(tree));
-        } catch (error) {
-            console.error('Error adding child:', error);
+        } catch (err) {
+            console.error(err);
         }
     };
         
         const deletePerson = async (idToDelete) => {
             try {
-                const res = await fetch(`http://localhost:5000/api/family/${idToDelete}`, {
+                await fetch(`http://localhost:5000/api/family/${idToDelete}`, {
                     method: 'DELETE',
                 });
-                if (!res.ok) throw new Error('Failed to delete person');
                 
                 const updated = await fetch('http://localhost:5000/api/family');
                 const data = await updated.json();
@@ -62,43 +62,44 @@ const FamilyTree = ({ isRoot = true }) => {
             } catch (error) {
                 console.error('Error deleting person:', error);
             }
+    };
 
-            const removeNode = (nodes) => 
-                nodes
-            .filter(node => node.id !== idToDelete)
-            .map(node => ({
-                ...node,
-                children: removeNode(node.children || [])}));
-                
-        setTree(removeNode(tree));
-    }
-
-    return (
-        <div className="family-tree-container">
-    {isRoot && <h1 className="family-tree-header">Ancestral Tree</h1>}
-    <div className="family-tree">
-        {Array.isArray(tree) && tree.length > 0 ? (tree.map((person) => (
-            <div key={person.id} className="family-node">
-                <PersonCard person={person} 
-                onAddChild={() => addChild(person.id)}
-                onDelete={() => deletePerson(person.id)}/>
+    const renderNode = (person) => {
+        return (
+            <div key={person.id} className="family-node-wrapper">
+                <div className="partner-group">
+                    <PersonCard
+                        person={person}
+                        onAddChild={() => addChild(person.id)}
+                        onDelete={() => deletePerson(person.id)}
+                    />
+                    {person.partner && (
+                        <PersonCard
+                            person={person.partner}
+                            isPartner
+                            onDelete={() => deletePerson(person.partner.id)}
+                        />
+                    )}
+                </div>
 
                 {person.children && person.children.length > 0 && (
                     <div className="family-children">
                         {person.children.map((child) => (
-                            <div key={child.id}>
-                                <FamilyTree family={[child]} isRoot={false} />
-                            </div>
-                ))}
-                </div>
-                        )}
+                            <FamilyTree key={child.id} family={[child]} isRoot={false} />
+                        ))}
                     </div>
-                ))
-            ) : (
-                <p className="text-center text-gray-500">No data available</p>
-            )}
+                )}
+            </div>
+        );
+    };
+
+    return (
+        <div className="family-tree-container">
+            {isRoot && <h1 className="family-tree-header">Ancestral Tree</h1>}
+            <div className="family-tree">
+                {(isRoot ? tree : family).map((person) => renderNode(person))}
+            </div>
         </div>
-    </div>
     );
 };
 
