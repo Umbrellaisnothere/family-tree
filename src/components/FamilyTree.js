@@ -16,14 +16,24 @@ const FamilyTree = ({ isRoot = true }) => {
             .catch(err => console.error('Error fetching family:', err));
     }, []);
 
-    const addChild = (parentId) => {
-        const newChild = {
-            id: Date.now(),
-            name: "New Child",
-            birthDate: "2000-01-01",
-            image: "https://picsum.photos/80",
-            children: []
-        };
+    const addChild = async (parentId) => {
+        try {
+            const response = await fetch('http://localhost:5000/api/family', {
+                method: 'POST',
+                headers: {
+                 'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 
+                parent_Id: parentId,
+                name: "New Child",
+                birthDate: "2023-01-01",
+                image: "https://picsum.photos/80",
+            }),
+        });
+
+        if (!response.ok) throw new Error('Failed to add child');
+
+        const newChild = await response.json();
 
         const updateTree = (nodes) => 
             nodes.map(node => {
@@ -34,9 +44,25 @@ const FamilyTree = ({ isRoot = true }) => {
             });
 
         setTree(updateTree(tree));
+        } catch (error) {
+            console.error('Error adding child:', error);
+        }
     };
         
-        const deletePerson = (idToDelete) => {
+        const deletePerson = async (idToDelete) => {
+            try {
+                const res = await fetch(`http://localhost:5000/api/family/${idToDelete}`, {
+                    method: 'DELETE',
+                });
+                if (!res.ok) throw new Error('Failed to delete person');
+                
+                const updated = await fetch('http://localhost:5000/api/family');
+                const data = await updated.json();
+                setTree(buildFamilyTree(data));
+            } catch (error) {
+                console.error('Error deleting person:', error);
+            }
+
             const removeNode = (nodes) => 
                 nodes
             .filter(node => node.id !== idToDelete)
