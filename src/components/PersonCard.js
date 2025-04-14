@@ -3,9 +3,10 @@ import './PersonCard.css';
 
 const calculateAge = (birthDate, deathDate) => {
     const birth = new Date(birthDate);
-    const end = deathDate ? new Date(deathDate) : new Date();
-    let age = end.getFullYear() - birth.getFullYear();
-    if (end.getMonth() < birth.getMonth() || (end.getMonth() === birth.getMonth() && end.getDate() < birth.getDate())) {
+    const death = deathDate ? new Date(deathDate) : new Date();
+    let age = death.getFullYear() - birth.getFullYear();
+    const month = death.getMonth();
+    if (month < birth.getMonth() || (month === birth.getMonth() && death.getDate() < birth.getDate())) {
         age--;
     }
 
@@ -27,7 +28,9 @@ const PersonCard = ({ person, onAddChild, onDelete }) => {
         <div className="person-card">
           <img src={image} alt={person.name} className='person-image'/>
           <div className="person-name">{person.name}</div>
-            <div className="person-details">Born: {person.birthDate}</div>
+          <div className="person-details"><strong>Gender:</strong> {person.gender || 'Unknown'}</div>
+          <div className="person-details"><strong>Relationship:</strong> {person.relationship || 'N/A'}</div>
+          <div className="person-details">Born: {person.birthDate}</div>
             {person.deathDate ? (
                 <div className="person-details">Died: {person.deathDate}</div>
             ) : (
