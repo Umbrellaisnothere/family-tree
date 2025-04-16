@@ -11,7 +11,7 @@ const calculateAge = (birthDate, deathDate) => {
     }
 
     return age;
-}
+};
 
 const PersonCard = ({ person, onAddChild, onDelete }) => {
     const [image, setImage] = useState(person.image);
@@ -36,7 +36,11 @@ const PersonCard = ({ person, onAddChild, onDelete }) => {
             ) : (
                 <div className="person-details">Age: {calculateAge(person.birthDate)}</div>
             )}
-            <input type="file" accept="image/*" onChange={handleImageUpload} className="person-details" />
+            <input 
+            type="file" 
+            accept="image/*" 
+            onChange={handleImageUpload} 
+            className="person-details" />
             <div className="card-actions">
                 <button onClick={() => onAddChild(person.id)} className="card-btn">➕ Add Child</button>
                 <button onClick={() => onDelete(person.id)} className="card-btn delete">🗑 Delete</button>

@@ -15,53 +15,51 @@ const FamilyTree = ({ family = [], isRoot = true }) => {
                     setTree(treeData);
                 })
                 .catch(err => console.error('Error fetching family:', err));
-            }
+        }
     }, [isRoot]);
 
     const addChild = async (parentId) => {
         try {
             const response = await fetch('http://localhost:5000/api/family', {
                 method: 'POST',
-                headers: {
-                 'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ 
-                parent_Id: parentId,
-                name: "New Child",
-                birthDate: "2023-01-01",
-                image: "https://picsum.photos/80",
-            }),
-        });
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    parent_Id: parentId,
+                    name: "New Child",
+                    birthDate: "2023-01-01",
+                    image: "https://picsum.photos/80"
+                }),
+            });
 
-        if (!response.ok) throw new Error('Failed to add child');
+            if (!response.ok) throw new Error('Failed to add child');
 
-        const newChild = await response.json();
+            const newChild = await response.json();
 
-        const updateTree = (nodes) => 
-            nodes.map((node) =>
-                node.id === parentId
-                    ? { ...node, children: [...(node.children || []), newChild] }  
-                    : { ...node, children: updateTree(node.children || []) }
-            );
+            const updateTree = (nodes) =>
+                nodes.map((node) =>
+                    node.id === parentId
+                        ? { ...node, children: [...(node.children || []), newChild] }
+                        : { ...node, children: updateTree(node.children || []) }
+                );
 
-        setTree(updateTree(tree));
+            setTree(updateTree(tree));
         } catch (err) {
             console.error(err);
         }
     };
-        
-        const deletePerson = async (idToDelete) => {
-            try {
-                await fetch(`http://localhost:5000/api/family/${idToDelete}`, {
-                    method: 'DELETE',
-                });
-                
-                const updated = await fetch('http://localhost:5000/api/family');
-                const data = await updated.json();
-                setTree(buildFamilyTree(data));
-            } catch (error) {
-                console.error('Error deleting person:', error);
-            }
+
+    const deletePerson = async (idToDelete) => {
+        try {
+            await fetch(`http://localhost:5000/api/family/${idToDelete}`, {
+                method: 'DELETE',
+            });
+
+            const updated = await fetch('http://localhost:5000/api/family');
+            const data = await updated.json();
+            setTree(buildFamilyTree(data));
+        } catch (error) {
+            console.error('Error deleting person:', error);
+        }
     };
 
     const renderNode = (person) => {
@@ -70,18 +68,17 @@ const FamilyTree = ({ family = [], isRoot = true }) => {
                 <div className="partner-group">
                     <PersonCard
                         person={person}
-                        onAddChild={() => addChild(person.id)}
-                        onDelete={() => deletePerson(person.id)}
+                        onAddChild={addChild}
+                        onDelete={deletePerson}
                     />
                     {person.partner && (
                         <PersonCard
                             person={person.partner}
                             isPartner
-                            onDelete={() => deletePerson(person.partner.id)}
+                            onDelete={deletePerson}
                         />
                     )}
                 </div>
-
                 {person.children && person.children.length > 0 && (
                     <div className="family-children">
                         {person.children.map((child) => (
