@@ -25,10 +25,11 @@ const PersonCard = ({ person, onAddChild, onDelete }) => {
     };
 
     return (
-        <div className="person-card">
+        <div className={`person-card ${person.gender}`}>
           <img src={image} alt={person.name} className='person-image'/>
           <div className="person-name">{person.name}</div>
-          <div className="person-details"><strong>Gender:</strong> {person.gender || 'Unknown'}</div>
+          <div className="person-details">
+            <strong>Gender:</strong> {person.gender === 'male' ? '♂' : person.gender === 'female' ? '♀' : 'Unknown'}</div>
           <div className="person-details"><strong>Relationship:</strong> {person.relationship || 'N/A'}</div>
           <div className="person-details">Born: {person.birthDate}</div>
             {person.deathDate ? (
