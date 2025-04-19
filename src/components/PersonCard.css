@@ -85,3 +85,10 @@ font-size: 0.875rem;
 .person-card.other {
   border-left: 5px solid #6C757D;
 }
+
+.gender-select {
+  margin-left: 0.5rem;
+  padding: 0.25rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}

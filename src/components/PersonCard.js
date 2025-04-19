@@ -15,6 +15,7 @@ const calculateAge = (birthDate, deathDate) => {
 
 const PersonCard = ({ person, onAddChild, onDelete }) => {
     const [image, setImage] = useState(person.image);
+    const [gender, setGender] = useState(person.gender || '');
 
     const handleImageUpload = (event) => {
         const file = event.target.files[0];
@@ -24,24 +25,40 @@ const PersonCard = ({ person, onAddChild, onDelete }) => {
         }
     };
 
+    const handleGenderChange = (e) => {
+        setGender(e.target.value);
+    };
+
     return (
-        <div className={`person-card ${person.gender}`}>
-          <img src={image} alt={person.name} className='person-image'/>
-          <div className="person-name">{person.name}</div>
-          <div className="person-details">
-            <strong>Gender:</strong> {person.gender === 'male' ? '♂' : person.gender === 'female' ? '♀' : 'Unknown'}</div>
-          <div className="person-details"><strong>Relationship:</strong> {person.relationship || 'N/A'}</div>
-          <div className="person-details">Born: {person.birthDate}</div>
+        <div className={`person-card ${gender}`}>
+            <img src={image} alt={person.name} className='person-image'/>
+            <div className="person-name">{person.name}</div>
+
+            <div className="person-details">
+                <strong>Gender:</strong>
+                <select value={gender} onChange={handleGenderChange} className="gender-select">
+                    <option value="">Unknown</option>
+                    <option value="male">♂️ Male</option>
+                    <option value="female">♀️ Female</option>
+                    <option value="other">⚧️ Other</option>
+                </select>
+            </div>
+
+            <div className="person-details"><strong>Relationship:</strong> {person.relationship || 'N/A'}</div>
+            <div className="person-details">Born: {person.birthDate}</div>
             {person.deathDate ? (
                 <div className="person-details">Died: {person.deathDate}</div>
             ) : (
                 <div className="person-details">Age: {calculateAge(person.birthDate)}</div>
             )}
+
             <input 
-            type="file" 
-            accept="image/*" 
-            onChange={handleImageUpload} 
-            className="person-details" />
+                type="file" 
+                accept="image/*" 
+                onChange={handleImageUpload} 
+                className="person-details" 
+            />
+
             <div className="card-actions">
                 <button onClick={() => onAddChild(person.id)} className="card-btn">➕ Add Child</button>
                 <button onClick={() => onDelete(person.id)} className="card-btn delete">🗑 Delete</button>
