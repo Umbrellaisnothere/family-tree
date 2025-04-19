@@ -1,4 +1,27 @@
-.family-node {
+.family-node-stack {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+.family-parent {
+    margin-bottom: 40px;
+    position: relative;
+}
+
+.family-parent::after {
+    content: '';
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    width: 2px;
+    height: 20px;
+    background-color: #a0aec0;
+    transform: translateX(-50%);
+}
+
+.family-node-wrapper {
     position: relative;
     display: flex;
     padding-top: 20px;
@@ -6,10 +29,52 @@
     align-items: center;
 }
 
-.family-node::before {
+.partner-group {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    position: relative;
+}
+
+.partner-group::before {
+    display: none;
+}
+
+.partner-group.with-partner::before {
+    display: block;
     content: '';
     position: absolute;
-    top: 0;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: #a0aec0;
+    z-index: 0;
+}
+
+.partner-group > * {
+    position: relative;
+    z-index: 1;
+}
+
+.partner-group.single-parent {
+    justify-content: center;
+  }
+  
+.partner-group.single-parent::before {
+    display: none;
+  }
+
+.family-node-wrapper::after {
+    display: none;
+}
+
+.family-node-wrapper.has-children::after {
+    display: block;
+    content: '';
+    position: absolute;
+    top: 100%;
     left: 50%;
     width: 2px;
     height: 20px;
@@ -20,7 +85,8 @@
     display: flex;
     position: relative;
     justify-content: center;
-    margin-top: 20px;
+    margin-top: 40px;
+    gap: 40px;
 }
 
 .family-children::before {
@@ -34,8 +100,8 @@
 }
 
 .family-children > div {
-    margin: 0 10px;
     position: relative;
+    margin: 0 10px;
 }
 
 .family-children > div::before {
@@ -46,4 +112,67 @@
     width: 2px;
     height: 20px;
     background-color: #a0aec0;
+}
+
+.child-node {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.family-children > .child-node::before {
+    content: '';
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 20px;
+    background-color: #a0aec0;
+}
+
+
+@media (max-width: 480px) {
+    .family-parent {
+        margin-bottom: 24px;
+    }
+
+    .family-parent::after {
+        display: none;
+    }
+
+    .partner-group {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .partner-group::before {
+        display: none;
+    }
+
+    .family-node {
+        padding-top: 16px;
+    }
+
+    .family-children {
+        flex-direction: column;
+        align-items: center;
+        gap: 24px;
+    }
+
+    .family-children > div {
+        margin: 12px 0;
+    }
+
+    .family-children::before,
+    .family-children > div::before {
+        display: none;
+    }
+
+    .child-node::before {
+        display: none;
+    }
+    
 }

@@ -63,15 +63,31 @@ const FamilyTree = ({ family = [], isRoot = true }) => {
     };
 
     const renderNode = (person) => {
+        const hasPartner = person.partner !== null && person.partner !== undefined;
+        const hasChildren = person.children && person.children.length > 0;
+        const hasParent = person.parent !== null && person.parent !== undefined;
+
         return (
-            <div key={person.id} className="family-node-wrapper">
-                <div className="partner-group">
+            <div 
+            className='family-node-stack' 
+            key={person.id}>
+                {hasParent && (
+                    <div className='family-parent'>
+                        <FamilyTree family={[person.parent]} isRoot={false} />
+                    </div>
+                )}
+
+            <div 
+            key={person.id} 
+            className={`family-node-wrapper ${hasChildren ? 'has-children' : ''}`}
+            >
+                <div className={`partner-group ${hasPartner ? 'with-partner' : 'single-parent'}`}>
                     <PersonCard
                         person={person}
                         onAddChild={addChild}
                         onDelete={deletePerson}
                     />
-                    {person.partner && (
+                    {hasPartner && (
                         <PersonCard
                             person={person.partner}
                             isPartner
@@ -79,13 +95,18 @@ const FamilyTree = ({ family = [], isRoot = true }) => {
                         />
                     )}
                 </div>
-                {person.children && person.children.length > 0 && (
+
+                {hasChildren && (
                     <div className="family-children">
                         {person.children.map((child) => (
-                            <FamilyTree key={child.id} family={[child]} isRoot={false} />
+                            <div key={child.id} 
+                            className='child-node'>
+                                <FamilyTree family={[child]} isRoot={false} />
+                            </div>
                         ))}
                     </div>
                 )}
+            </div>
             </div>
         );
     };

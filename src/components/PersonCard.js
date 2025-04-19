@@ -44,12 +44,15 @@ const PersonCard = ({ person, onAddChild, onDelete }) => {
                 </select>
             </div>
 
-            <div className="person-details"><strong>Relationship:</strong> {person.relationship || 'N/A'}</div>
-            <div className="person-details">Born: {person.birthDate}</div>
+            <div className="person-details">
+                <strong>Relationship:</strong> {' '}
+                {person.relationship && person.relationship.trim() !== '' ? person.relationship : person.isPartner ? 'Partner' : person.children?.length > 0 ? 'Parent' : 'N/A'}
+            </div>
+            <div className="person-details"><strong>Born:</strong> {person.birthDate}</div>
             {person.deathDate ? (
-                <div className="person-details">Died: {person.deathDate}</div>
+                <div className="person-details"><strong>Died:</strong> {person.deathDate}</div>
             ) : (
-                <div className="person-details">Age: {calculateAge(person.birthDate)}</div>
+                <div className="person-details"><strong>Age:</strong> {calculateAge(person.birthDate)}</div>
             )}
 
             <input 
