@@ -11,7 +11,7 @@ const FamilyTree = ({ family = [], isRoot = true }) => {
             fetch('http://localhost:5000/api/family')
                 .then(res => res.json())
                 .then(data => {
-                    const treeData = buildFamilyTree(data);
+                    const treeData = buildFamilyTree(data.roots);
                     setTree(treeData);
                 })
                 .catch(err => console.error('Error fetching family:', err));
