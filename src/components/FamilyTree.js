@@ -5,6 +5,8 @@ import "./FamilyTree.css";
 
 const FamilyTree = ({ family = [], isRoot = true }) => {
     const [tree, setTree] = useState([]);
+    const [allPersons, setAllPersons] = useState([]);
+    const [searchQuery, setSearchQuery] = useState('');
 
     useEffect(() => {
         if (isRoot) {
@@ -13,6 +15,7 @@ const FamilyTree = ({ family = [], isRoot = true }) => {
                 .then(data => {
                     const treeData = buildFamilyTree(data.roots);
                     setTree(treeData);
+                    setAllPersons(data.allPersons);
                 })
                 .catch(err => console.error('Error fetching family:', err));
         }
@@ -112,13 +115,50 @@ const FamilyTree = ({ family = [], isRoot = true }) => {
     };
 
     return (
-        <div className="family-tree-container">
-            {isRoot && <h1 className="family-tree-header">Ancestral Tree</h1>}
-            <div className="family-tree">
-                {(isRoot ? tree : family).map((person) => renderNode(person))}
+            <div className="family-tree-container">
+                {isRoot && <h1 className="family-tree-header">Ancestral Tree</h1>}
+        
+                <input
+                    type="text"
+                    placeholder="Search family member..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="search-history"
+                />
+        
+                {searchQuery && (
+                    <ul className="search-results-list">
+                        {allPersons
+                            .filter((person) =>
+                                person.name.toLowerCase().includes(searchQuery.toLowerCase())
+                            )
+                            .map((person) => (
+                                <li
+                                    key={person.id}
+                                    className="search-result-item"
+                                    onClick={() => {
+                                        alert(`Selected person: ${person.name}`);
+                                        setSearchQuery('');
+                                    }}
+                                >
+                                    👤 {person.name}
+                                </li>
+                            ))
+                        }
+        
+                        {allPersons.filter(person =>
+                            person.name.toLowerCase().includes(searchQuery.toLowerCase())
+                        ).length === 0 && (
+                            <li className="search-no-result">❌ Person not found</li>
+                        )}
+                    </ul>
+                )}
+        
+                <div className="family-tree">
+                    {(isRoot ? tree : family).map((person) => renderNode(person))}
+                </div>
             </div>
-        </div>
-    );
+        );
 };
 
 export default FamilyTree;

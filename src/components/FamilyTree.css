@@ -21,6 +21,48 @@
     transform: translateX(-50%);
 }
 
+.search-history {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 8px;
+    gap: 20px;
+    width: 100%;
+    max-width: 400px;
+    font-size: 1rem;
+    border-radius: 5px;
+    margin: 10px 0;
+}
+
+.search-results-list {
+    list-style-type: none;
+    padding: 0;
+    margin-top: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+  
+  .search-result-item {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .search-result-item:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .search-no-result {
+    padding: 10px;
+    color: #999;
+    font-style: italic;
+  }
+  
+
 .family-node-wrapper {
     position: relative;
     display: flex;
