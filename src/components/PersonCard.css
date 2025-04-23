@@ -38,6 +38,27 @@
  color: #f56565;
 }
 
+.person-card.deceased {
+  background-color: #444;
+  color: #ccc;
+  border: 2px dashed #aaa;
+  opacity: 0.8;
+}
+
+.person-card.deceased .person-image {
+  filter: grayscale(100%);
+  border: 2px solid #999;
+}
+
+.person-deceased-note {
+  font-style: italic;
+  color: #ddd;
+  font-size: 0.85rem;
+  margin-top: -8px;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
 .card-actions {
   display: flex;
   justify-content: space-between;

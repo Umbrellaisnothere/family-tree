@@ -30,9 +30,13 @@ const PersonCard = ({ person, onAddChild, onDelete }) => {
     };
 
     return (
-        <div className={`person-card ${gender}`}>
+        <div className={`person-card ${gender} ${person.deathDate ? 'deceased' : ''}`}>
             <img src={image} alt={person.name} className='person-image'/>
             <div className="person-name">{person.name}</div>
+
+            {person.deathDate && (
+                <div className="person-deceased-note">🕊 Deceased</div>
+            )}
 
             <div className="person-details">
                 <strong>Gender:</strong>
