@@ -59,7 +59,7 @@ const FamilyTree = ({ family = [], isRoot = true }) => {
 
             const updated = await fetch('http://localhost:5000/api/family');
             const data = await updated.json();
-            setTree(buildFamilyTree(data));
+            setTree(buildFamilyTree(data.roots));
         } catch (error) {
             console.error('Error deleting person:', error);
         }
@@ -71,20 +71,15 @@ const FamilyTree = ({ family = [], isRoot = true }) => {
         const hasParent = person.parent !== null && person.parent !== undefined;
 
         return (
-            <div 
-            className='family-node-stack' 
-            key={person.id}>
-                {hasParent && (
-                    <div className='family-parent'>
-                        <FamilyTree family={[person.parent]} isRoot={false} />
-                    </div>
-                )}
+            <div className='tree-container' key={person.id}>
+            {hasParent && (
+                <div className='tree-level'>
+                    <FamilyTree family={[person.parent]} isRoot={false} />
+                </div>
+            )}
 
-            <div 
-            key={person.id} 
-            className={`family-node-wrapper ${hasChildren ? 'has-children' : ''}`}
-            >
-                <div className={`partner-group ${hasPartner ? 'with-partner' : 'single-parent'}`}>
+            <div className={`tree-level ${hasChildren ? 'has-children' : ''}`}>
+                <div className={`partner-container ${hasPartner ? 'with-partner' : 'single-parent'}`}>
                     <PersonCard
                         person={person}
                         onAddChild={addChild}
@@ -98,21 +93,20 @@ const FamilyTree = ({ family = [], isRoot = true }) => {
                         />
                     )}
                 </div>
+            </div>
 
-                {hasChildren && (
-                    <div className="family-children">
-                        {person.children.map((child) => (
-                            <div key={child.id} 
-                            className='child-node'>
-                                <FamilyTree family={[child]} isRoot={false} />
-                            </div>
-                        ))}
-                    </div>
-                )}
-            </div>
-            </div>
-        );
-    };
+            {hasChildren && (
+                <div className="tree-children">
+                    {person.children.map((child) => (
+                        <div key={child.id} className='tree-connector'>
+                            <FamilyTree family={[child]} isRoot={false} />
+                        </div>
+                    ))}
+                </div>
+            )}
+        </div>
+    );
+};
 
     return (
             <div className="family-tree-container">
