@@ -6,7 +6,7 @@ html {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin: 1rem 0;
+    margin: 1.2rem 0;
     position: relative;
 }
 
@@ -17,6 +17,7 @@ html {
     justify-content: center;
     gap: 20px;
     position: relative;
+    flex-wrap: wrap;
 }
 
 .partner-container::before,
@@ -26,8 +27,8 @@ html {
 
 .partner-container.with-partner::before,
 .partner-group.with-partner::before {
-    display: block;
     content: '';
+    display: block;
     position: absolute;
     top: 50%;
     left: 0;
@@ -55,7 +56,7 @@ html {
     margin-top: 1rem;
     position: relative;
     flex-wrap: wrap;
-    gap: 20px; /* nice */
+    gap: 30px; /* nice */
 }
 
 .tree-connector::before {
@@ -69,11 +70,15 @@ html {
 }
 
 .tree-connector {
+    position: relative;
     margin: 0 10px;
 }
 
 .family-tree-header {
     text-align: center;
+    font-size: 2rem;
+    margin-bottom: 20px;
+    color: #2d3748;
 }
 
 .family-node-stack {
@@ -103,19 +108,21 @@ html {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 8px;
-    gap: 20px;
-    width: 100%;
+    padding: 8px 12px;
+    width: 90%;
     max-width: 400px;
     font-size: 1rem;
     border-radius: 5px;
-    margin: 10px 0;
+    border: 1px solid #ccc;
+    margin: 10px auto;
 }
 
 .search-results-list {
     list-style-type: none;
     padding: 0;
-    margin-top: 10px;
+    width: 90%;
+    max-width: 400px;
+    margin: 10px auto;
     background-color: #f9f9f9;
     border: 1px solid #ddd;
     border-radius: 5px;
@@ -195,6 +202,7 @@ html {
     width: 2px;
     height: 20px;
     background-color: #a0aec0;
+    transform: translateX(-50%);
 }
 
 .child-node {
@@ -217,6 +225,11 @@ html {
 
 
 @media (max-width: 480px) {
+    .tree-children,
+    .family-children {
+        gap: 20px;
+    }
+    
     .family-parent {
         margin-bottom: 24px;
     }

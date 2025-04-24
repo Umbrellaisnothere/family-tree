@@ -7,6 +7,7 @@ const FamilyTree = ({ family = [], isRoot = true }) => {
     const [tree, setTree] = useState([]);
     const [allPersons, setAllPersons] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
+    const [expanded, setExpanded] = useState(false);
 
     useEffect(() => {
         if (isRoot) {
@@ -30,6 +31,7 @@ const FamilyTree = ({ family = [], isRoot = true }) => {
                     parent_Id: parentId,
                     name: "New Child",
                     birthDate: "2023-01-01",
+                    gender: 'unknown',
                     image: "https://picsum.photos/80"
                 }),
             });
@@ -65,10 +67,15 @@ const FamilyTree = ({ family = [], isRoot = true }) => {
         }
     };
 
+    const toggleExpand = (id) => {
+        setExpanded(prev => ({ ...prev, [id]: !prev[id] }));
+    }
+
     const renderNode = (person) => {
         const hasPartner = person.partner !== null && person.partner !== undefined;
         const hasChildren = person.children && person.children.length > 0;
         const hasParent = person.parent !== null && person.parent !== undefined;
+        const isExpanded = expanded[person.id] ?? true; 
 
         return (
             <div className='tree-container' key={person.id}>
@@ -93,9 +100,14 @@ const FamilyTree = ({ family = [], isRoot = true }) => {
                         />
                     )}
                 </div>
+                {hasChildren && (
+                    <button onClick={() => toggleExpand(person.id)} className='collapse-toggle'>
+                        {isExpanded ? 'Collapse Children' : 'Expand Children'}
+                    </button>
+                )}
             </div>
 
-            {hasChildren && (
+            {hasChildren && isExpanded &&(
                 <div className="tree-children">
                     {person.children.map((child) => (
                         <div key={child.id} className='tree-connector'>
