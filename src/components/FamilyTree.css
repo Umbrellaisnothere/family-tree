@@ -28,7 +28,7 @@ html {
 .partner-container.with-partner::before,
 .partner-group.with-partner::before {
     content: '';
-    display: block;
+    /* display: block; */
     position: absolute;
     top: 50%;
     left: 0;
@@ -67,6 +67,7 @@ html {
     height: 10px;
     width: 20px;
     background-color: #999;
+    transform: translateX(-50%);
 }
 
 .tree-connector {
@@ -164,6 +165,7 @@ html {
     width: 2px;
     height: 20px;
     background-color: #a0aec0;
+    transform: translateX(-50%);
 }
 
 .family-node-wrapper::after {
@@ -221,23 +223,31 @@ html {
     width: 2px;
     height: 20px;
     background-color: #a0aec0;
+    transform: translateX(-50%);
 }
 
 
 @media (max-width: 480px) {
     .tree-children,
     .family-children {
+        flex-direction: column;
+        align-items: center;
         gap: 20px;
     }
     
     .family-parent {
         margin-bottom: 24px;
     }
-
-    .family-parent::after {
+    
+    .partner-group::before,
+    .partner-container::before,
+    .family-parent::after 
+    .family-children::before,
+    .family-children > div::before,
+    .child-node::before {
         display: none;
     }
-
+    
     .partner-group,
     .partner-container {
         flex-direction: column;
@@ -245,10 +255,6 @@ html {
         gap: 10px;
     }
 
-    .partner-group::before,
-    .partner-container::before {
-        display: none;
-    }
 
     .family-node {
         padding-top: 16px;
@@ -262,11 +268,5 @@ html {
 
     .family-children > div {
         margin: 12px 0;
-    }
-
-    .family-children::before,
-    .family-children > div::before,
-    .child-node::before {
-        display: none;
     }
 }
