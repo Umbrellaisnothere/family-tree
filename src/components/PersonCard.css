@@ -7,6 +7,7 @@
   padding: 16px;
   max-width: 300px;
   text-align: center;
+  position: relative;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -88,6 +89,17 @@
 
 .card-btn.delete:hover {
   background-color: #dc2626;
+}
+
+.card-btn.disabled {
+  background-color: #ccc;
+  color: #666;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+card-btn.delete.disabled {
+  background-color: #e2e2e2;
 }
   
 .person-card input[type="file"] {

@@ -1,4 +1,16 @@
-html {
+* {
+    border: 1px solid red;
+    /* overflow: visible; */
+} /* Highlight for debugging */
+
+*, *::before, *::after {
+    box-sizing: inherit;
+}
+
+html, body {
+    max-width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
     scroll-behavior: smooth;
 }
 
@@ -6,8 +18,8 @@ html {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin: 1.2rem 0;
     position: relative;
+    margin: 10px 0;
 }
 
 .partner-container,
@@ -15,9 +27,13 @@ html {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 20px;
     position: relative;
-    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.partner-container.with-partner {
+    min-height: 10px;
+    position: relative;
 }
 
 .partner-container::before,
@@ -28,7 +44,6 @@ html {
 .partner-container.with-partner::before,
 .partner-group.with-partner::before {
     content: '';
-    /* display: block; */
     position: absolute;
     top: 50%;
     left: 0;
@@ -50,36 +65,151 @@ html {
     display: none;
 }
 
+.collapse-toggle {
+    margin-top: 10px;
+    padding: 5px 10px;
+    background-color: #e0e0e0;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.collapse-toggle:hover {
+    background-color: #999;
+    color: #fff;
+}
+
 .tree-children {
     display: flex;
     justify-content: center;
-    margin-top: 1rem;
-    position: relative;
+    max-width: 100%;
     flex-wrap: wrap;
-    gap: 30px; /* nice */
+    gap: 20px; /* nice */
+    transition: max-height 0.5s ease, opacity 0.5s ease;
 }
 
-.tree-connector::before {
+.tree-children-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+    position: relative;
+}
+
+.tree-children::before {
     content: '';
     position: absolute;
-    top: -10px;
+    top: 0;
     left: 50%;
-    height: 10px;
-    width: 20px;
-    background-color: #999;
+    width: 100%;
+    height: 2px;
+    background-color: #333;
     transform: translateX(-50%);
+    z-index: 0;
 }
 
-.tree-connector {
+.tree-children.collapsed {
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+}
+
+.tree-children.expanded {
+    opacity: 1;
+    height: auto;
+    transform-origin: top;
+}
+
+.tree-child {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* position: relative; */
+}
+
+/* .tree-connector::before {
+    content: '';
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    height: 10px;
+    width: 2px;
+    background-color: #000;
+    transform: translateX(-50%);
+} */
+
+.tree-connect-line {
+    width: 2px;
+    height: 20px;
+    margin: 0 auto;
+    min-height: 20px;
+    background-color: #000;
+}
+
+.partner-connector {
+    font-size: 10px;
+    line-height: 1;
+    margin: 0 6px;
+    display: flex;
+    align-items: center;
+    background-color: #000;
+}
+
+.tree-level {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.tree-level.with-partner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     position: relative;
-    margin: 0 10px;
+}
+
+.tree-level.with-partner::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: #999;
+    z-index: -1;
+}
+
+.family-tree-container {
+    text-align: center;
+    max-width: 100vw;
+    padding: 24px 0;
+    background: #f8fafc;
+    min-height: 100vh;
+}
+
+.family-tree {
+    /* width: 100%;
+    max-width: 100%; */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .family-tree-header {
-    text-align: center;
-    font-size: 2rem;
-    margin-bottom: 20px;
-    color: #2d3748;
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #22223b;
+    margin-bottom: 18px;
+    letter-spacing: -0.01em;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    padding: 12px 0;
+    position: sticky;
+    top: 0;
+    z-index: 20;
 }
 
 .family-node-stack {
@@ -94,64 +224,77 @@ html {
     position: relative;
 }
 
-.family-parent::after {
-    content: '';
-    position: absolute;
-    bottom: -20px;
-    left: 50%;
-    width: 2px;
-    height: 20px;
-    background-color: #a0aec0;
-    transform: translateX(-50%);
-}
-
 .search-history {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 8px 12px;
-    width: 90%;
-    max-width: 400px;
-    font-size: 1rem;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    margin: 10px auto;
+    width: 95%;
+    max-width: 420px;
+    margin: 0 auto 18px auto;
+    padding: 12px 16px;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    background: #fff;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+    position: sticky;
+    top: 60px;
+    z-index: 10;
 }
 
 .search-results-list {
-    list-style-type: none;
+    list-style: none;
     padding: 0;
-    width: 90%;
-    max-width: 400px;
-    margin: 10px auto;
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    max-height: 200px;
+    width: 100%;
+    max-width: 420px;
+    margin: 10px auto 0 auto;
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
     overflow-y: auto;
-  }
+    z-index: 30;
+    position: relative;
+}
   
-  .search-result-item {
-    padding: 10px;
-    border-bottom: 1px solid #eee;
+.search-result-item {
+    padding: 12px 18px;
     cursor: pointer;
-    transition: background-color 0.2s ease;
-  }
+    font-size: 1rem;
+    border-bottom: 1px solid #f1f1f1;
+    transition: background 0.2s;
+}
   
 .search-result-item:hover {
-    background-color: #f0f0f0;
+    background-color: #e0e7ef;
 }
   
 .search-no-result {
-    padding: 10px;
-    color: #701111;
+    padding: 12px 18px;
+    color: #b91c1c;
     font-style: italic;
+    font-size: 1rem;
+}
+
+.person-name {
+    word-wrap: break-word;
+    text-align: center;
+} /*testing*/
+
+.highlight {
+    border: 2px solid #fbbf24;
+    animation: fadeHighlight 2s ease-in-out;
+}
+
+@keyframes fadeHighlight {
+    0% {
+        background-color: #fef08a;
+    }
+    100% {
+        background-color: white;
+    }
 }
   
 .family-node-wrapper {
-    position: relative;
     display: flex;
-    padding-top: 20px;
+    position: relative;
     flex-direction: column;
     align-items: center;
 }
@@ -159,7 +302,6 @@ html {
 .family-node-wrapper.has-children::after {
     content: '';
     position: absolute;
-    display: block;
     top: 100%;
     left: 50%;
     width: 2px;
@@ -168,7 +310,7 @@ html {
     transform: translateX(-50%);
 }
 
-.family-node-wrapper::after {
+.family-node-wrapper:not(.has-children)::after {
     display: none;
 }
 
@@ -178,6 +320,8 @@ html {
     justify-content: center;
     margin-top: 40px;
     gap: 40px;
+    min-height: 40px;
+    max-width: 100%;
     flex-wrap: wrap;
 }
 
@@ -188,23 +332,13 @@ html {
     left: 0;
     right: 0;
     height: 2px;
-    background-color: #a0aec0;
+    background-color: #000;
+    z-index: 1;
 }
 
 .family-children > div {
     position: relative;
     margin: 0 10px;
-}
-
-.family-children > div::before {
-    content: '';
-    position: absolute;
-    top: -20px;
-    left: 50%;
-    width: 2px;
-    height: 20px;
-    background-color: #a0aec0;
-    transform: translateX(-50%);
 }
 
 .child-node {
@@ -219,54 +353,118 @@ html {
     position: absolute;
     top: -20px;
     left: 50%;
-    transform: translateX(-50%);
     width: 2px;
     height: 20px;
-    background-color: #a0aec0;
+    background-color: #000;
     transform: translateX(-50%);
 }
 
 
-@media (max-width: 480px) {
-    .tree-children,
-    .family-children {
+@media (max-width: 600px) {
+    .tree-node {
+        min-width: 90vw;
+        max-width: 98vw;
+        padding: 12px 4px 8px 4px;
+    }
+    .tree-partners {
         flex-direction: column;
-        align-items: center;
-        gap: 20px;
-    }
-    
-    .family-parent {
-        margin-bottom: 24px;
-    }
-    
-    .partner-group::before,
-    .partner-container::before,
-    .family-parent::after 
-    .family-children::before,
-    .family-children > div::before,
-    .child-node::before {
-        display: none;
-    }
-    
-    .partner-group,
-    .partner-container {
-        flex-direction: column;
-        align-items: center;
         gap: 10px;
     }
-
-
-    .family-node {
-        padding-top: 16px;
-    }
-
-    .family-children {
+    .tree-children {
         flex-direction: column;
-        align-items: center;
-        gap: 24px;
+        gap: 12px;
     }
+    .search-history {
+        width: 98vw;
+        max-width: 98vw;
+        font-size: 1rem;
+    }
+}
 
-    .family-children > div {
-        margin: 12px 0;
-    }
+/* --- New refined styles for tree structure --- */
+.tree-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  margin-bottom: 32px;
+  padding: 24px 18px 18px 18px;
+  min-width: 320px;
+  max-width: 480px;
+  width: 100%;
+  transition: box-shadow 0.2s;
+}
+
+.tree-node:hover {
+  box-shadow: 0 6px 24px rgba(0,0,0,0.12);
+}
+
+.tree-partners {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 18px;
+  margin-bottom: 10px;
+  width: 100%;
+  justify-content: center;
+}
+
+.partner-connector {
+  font-size: 22px;
+  margin: 0 8px;
+  display: flex;
+  align-items: center;
+  color: #e63946;
+}
+
+.tree-children {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 28px;
+  margin-top: 18px;
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.tree-child {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 220px;
+  max-width: 320px;
+  margin-bottom: 8px;
+}
+
+/* --- Remove or comment out conflicting old styles --- */
+/* .tree-container, .partner-container, .tree-children-wrapper, .family-node-wrapper, .family-children, .tree-level, .tree-connect-line, .partner-group { display: none !important; } */
+
+.family-tree-container {
+  text-align: center;
+  max-width: 100%;
+  padding: 20px;
+  overflow: auto;
+}
+
+.family-tree {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  overflow-x: auto;
+}
+
+.search-history {
+  width: 90%;
+  padding: 10px;
+  margin: 10px 0;
+  max-width: 400px;
+  font-size: 1rem;
+  border-radius: 5px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #fff;
 }

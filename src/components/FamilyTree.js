@@ -1,170 +1,255 @@
-import React, { useState, useEffect } from "react";
-import { buildFamilyTree } from "../utilities/buildFamilyTree";
-import PersonCard from "./PersonCard";
-import "./FamilyTree.css";
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { buildFamilyTree } from '../utilities/buildFamilyTree';
+import PersonCard from './PersonCard';
+import AddChildModal from './AddChildModal';
+import './FamilyTree.css';
 
 const FamilyTree = ({ family = [], isRoot = true }) => {
-    const [tree, setTree] = useState([]);
     const [allPersons, setAllPersons] = useState([]);
+    const [relationships, setRelationships] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
-    const [expanded, setExpanded] = useState(false);
+    const [expanded, setExpanded] = useState({});
+    const [showModal, setShowModal] = useState(false);
+    const [modalParentId, setModalParentId] = useState(null);
 
     useEffect(() => {
         if (isRoot) {
             fetch('http://localhost:5000/api/family')
                 .then(res => res.json())
                 .then(data => {
-                    const treeData = buildFamilyTree(data.roots);
-                    setTree(treeData);
-                    setAllPersons(data.allPersons);
+                    const treeData = buildFamilyTree(data.persons || [], data.relationships || []);
+                    const autoExpanded = {};
+                    const traverse = (node) => {
+                        autoExpanded[String(node.id)] = true;
+                        node.children?.forEach(traverse);
+                    };
+                    treeData.forEach(traverse);
+                    setExpanded(autoExpanded);
+                    setAllPersons(data.persons || []);
+                    setRelationships(data.relationships || []);
                 })
                 .catch(err => console.error('Error fetching family:', err));
         }
     }, [isRoot]);
 
-    const addChild = async (parentId) => {
+    const openAddChildModal = useCallback((parentId) => {
+        setModalParentId(parentId);
+        setShowModal(true);
+    }, []);
+
+    const handleAddChildSubmit = async (childData) => {
+        const newChild = {
+            ...childData,
+            parentId: modalParentId,
+            children: [],
+            deathDate: null,
+            image: null
+        };
+
         try {
             const response = await fetch('http://localhost:5000/api/family', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    parent_Id: parentId,
-                    name: "New Child",
-                    birthDate: "2023-01-01",
-                    gender: 'unknown',
-                    image: "https://picsum.photos/80"
-                }),
+                body: JSON.stringify(newChild),
             });
 
             if (!response.ok) throw new Error('Failed to add child');
 
-            const newChild = await response.json();
-
-            const updateTree = (nodes) =>
-                nodes.map((node) =>
-                    node.id === parentId
-                        ? { ...node, children: [...(node.children || []), newChild] }
-                        : { ...node, children: updateTree(node.children || []) }
-                );
-
-            setTree(updateTree(tree));
+            const updated = await fetch('http://localhost:5000/api/family');
+            const data = await updated.json();
+            if (data.error) {
+                alert('API error: ' + data.error);
+                return;
+            }
+            preserveExpandedState(buildFamilyTree(data.persons || [], data.relationships || []));
+            setAllPersons(data.persons || []);
+            setRelationships(data.relationships || []);
+            setExpanded(prev => ({ ...prev, [String(modalParentId)]: true }));
+            setShowModal(false);
         } catch (err) {
+            alert('Something went wrong. Please try again later.')
             console.error(err);
         }
     };
 
-    const deletePerson = async (idToDelete) => {
+    const preserveExpandedState = useCallback((newTree) => {
+        const newExpanded = {};
+        const traverse = (node) => {
+            if (!node) return;
+            newExpanded[String(node.id)] = expanded[String(node.id)] || false;
+            node.children?.forEach(traverse);
+        };
+        newTree.forEach(traverse);
+        setExpanded(newExpanded);
+    }, [expanded]);
+
+    const deletePerson = useCallback(async (idToDelete, parentId) => {
         try {
-            await fetch(`http://localhost:5000/api/family/${idToDelete}`, {
+            const response = await fetch(`http://localhost:5000/api/family/${idToDelete}`, {
                 method: 'DELETE',
             });
+            if (!response.ok) throw new Error('Failed to delete person');
 
             const updated = await fetch('http://localhost:5000/api/family');
             const data = await updated.json();
-            setTree(buildFamilyTree(data.roots));
+            if (data.error) {
+                alert('API error: ' + data.error);
+                return;
+            }
+            preserveExpandedState(buildFamilyTree(data.persons || [], data.relationships || []));
+            setAllPersons(data.persons || []);
+            setRelationships(data.relationships || []);
+
+            setTimeout(() => {
+                if (parentId) {
+                    const el = document.getElementById(`person-${parentId}`);
+                    if (el) {
+                        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }
+            }, 300);
         } catch (error) {
             console.error('Error deleting person:', error);
         }
+    }, [preserveExpandedState]);
+
+    const toggleExpand = useCallback((personId) => {
+        setExpanded((prevExpanded) => ({ ...prevExpanded, [String(personId)]: !prevExpanded[String(personId)] }));
+    }, []);
+
+    const expandToPerson = (personId) => {
+        const personMap = new Map(allPersons.map(p => [p.id, p]));
+        let current = personMap.get(personId);
+        if (!current) return;
+
+        const path = [];
+        while (current?.parentId) {
+            path.push(String(current.parentId));
+            current = personMap.get(current.parentId);
+        }
+
+        const newExpanded = { ...expanded };
+        path.forEach(pid => newExpanded[pid] = true);
+        setExpanded(newExpanded);
     };
 
-    const toggleExpand = (id) => {
-        setExpanded(prev => ({ ...prev, [id]: !prev[id] }));
-    }
-
-    const renderNode = (person) => {
-        const hasPartner = person.partner !== null && person.partner !== undefined;
-        const hasChildren = person.children && person.children.length > 0;
-        const hasParent = person.parent !== null && person.parent !== undefined;
-        const isExpanded = expanded[person.id] ?? true; 
+    const renderNode = useCallback((person) => {
+        const children = Array.isArray(person.children) ? person.children : [];
+        const hasPartner = !!person.partner;
+        const hasChildren = children.length > 0;
+        const isExpanded = expanded[String(person.id)] ?? false;
 
         return (
-            <div className='tree-container' key={person.id}>
-            {hasParent && (
-                <div className='tree-level'>
-                    <FamilyTree family={[person.parent]} isRoot={false} />
-                </div>
-            )}
-
-            <div className={`tree-level ${hasChildren ? 'has-children' : ''}`}>
-                <div className={`partner-container ${hasPartner ? 'with-partner' : 'single-parent'}`}>
+            <div className='tree-node' key={person.id}>
+                <div className='tree-partners'>
                     <PersonCard
                         person={person}
-                        onAddChild={addChild}
+                        onAddChild={openAddChildModal}
                         onDelete={deletePerson}
                     />
                     {hasPartner && (
-                        <PersonCard
-                            person={person.partner}
-                            isPartner
-                            onDelete={deletePerson}
-                        />
+                        <>
+                            <div className='partner-connector'>❤️</div>
+                            <PersonCard
+                                person={person.partner}
+                                isPartner
+                                onDelete={deletePerson}
+                            />
+                        </>
                     )}
                 </div>
                 {hasChildren && (
-                    <button onClick={() => toggleExpand(person.id)} className='collapse-toggle'>
+                    <button onClick={() => toggleExpand(person.id)} className='collapse-toggle mt-2'>
                         {isExpanded ? 'Collapse Children' : 'Expand Children'}
                     </button>
                 )}
+                {isExpanded && hasChildren && (
+                    <div className='tree-children'>
+                        {children.map(child => (
+                            <div className='tree-child' key={child.id}>
+                                {renderNode(child)}
+                            </div>
+                        ))}
+                    </div>
+                )}
             </div>
+        );
+    }, [expanded, openAddChildModal, deletePerson, toggleExpand]);
 
-            {hasChildren && isExpanded &&(
-                <div className="tree-children">
-                    {person.children.map((child) => (
-                        <div key={child.id} className='tree-connector'>
-                            <FamilyTree family={[child]} isRoot={false} />
-                        </div>
-                    ))}
+    const tree = useMemo(() => buildFamilyTree(allPersons, relationships), [allPersons, relationships]);
+
+    const partnerIds = useMemo(() => {
+        const ids = new Set();
+        allPersons.forEach(person => {
+            if (person.partnerId) ids.add(person.partnerId);
+        });
+        return ids;
+    }, [allPersons]);
+
+    return (
+        <div className='family-tree-container'>
+            {isRoot && <h1 className='family-tree-header'>Ancestral Tree</h1>}
+
+            <input
+                type='text'
+                placeholder='Search family member...'
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className='search-history'
+            />
+
+            {searchQuery && (
+                <ul className='search-results-list'>
+                    {allPersons.filter((person) =>
+                        person.name.toLowerCase().includes(searchQuery.toLowerCase())
+                    ).map((person) => (
+                        <li
+                            key={person.id}
+                            className='search-result-item'
+                            onClick={() => {
+                                setSearchQuery('');
+                                expandToPerson(person.id);
+
+                                const el = document.getElementById(`person-${person.id}`);
+                                if (el) {
+                                    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                    el.classList.add('highlight');
+                                    setTimeout(() => el.classList.remove('highlight'), 2000);
+                                }
+                            }}
+                        >
+                            👤 {person.name}
+                        </li>
+                    ))
+                    }
+
+                    {allPersons.filter(person =>
+                        person.name.toLowerCase().includes(searchQuery.toLowerCase())
+                    ).length === 0 && (
+                            <li className='search-no-result'>❌  Person not found</li>
+                        )}
+                </ul>
+            )}
+
+            {(tree.length === 0 && isRoot) ? (
+                <div className="loading-tree">Loading family tree...</div>
+            ) : (
+                <div className='family-tree'>
+                    {(tree.length > 0 ? tree : family)
+                        .filter(person => !partnerIds.has(person.id))
+                        .map((person) => renderNode(person))}
                 </div>
+            )}
+
+            {showModal && (
+                <AddChildModal
+                    parentId={modalParentId}
+                    onClose={() => setShowModal(false)}
+                    onSubmit={handleAddChildSubmit}
+                />
             )}
         </div>
     );
-};
-
-    return (
-            <div className="family-tree-container">
-                {isRoot && <h1 className="family-tree-header">Ancestral Tree</h1>}
-        
-                <input
-                    type="text"
-                    placeholder="Search family member..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="search-history"
-                />
-        
-                {searchQuery && (
-                    <ul className="search-results-list">
-                        {allPersons
-                            .filter((person) =>
-                                person.name.toLowerCase().includes(searchQuery.toLowerCase())
-                            )
-                            .map((person) => (
-                                <li
-                                    key={person.id}
-                                    className="search-result-item"
-                                    onClick={() => {
-                                        alert(`Selected person: ${person.name}`);
-                                        setSearchQuery('');
-                                    }}
-                                >
-                                    👤 {person.name}
-                                </li>
-                            ))
-                        }
-        
-                        {allPersons.filter(person =>
-                            person.name.toLowerCase().includes(searchQuery.toLowerCase())
-                        ).length === 0 && (
-                            <li className="search-no-result">❌ Person not found</li>
-                        )}
-                    </ul>
-                )}
-        
-                <div className="family-tree">
-                    {(isRoot ? tree : family).map((person) => renderNode(person))}
-                </div>
-            </div>
-        );
 };
 
 export default FamilyTree;
