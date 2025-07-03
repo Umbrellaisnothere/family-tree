@@ -140,37 +140,74 @@ const FamilyTree = ({ family = [], isRoot = true }) => {
         const isExpanded = expanded[String(person.id)] ?? false;
 
         return (
-            <div className='tree-node' key={person.id}>
+            <div className='tree-node' key={person.id} style={{ position: 'relative' }}>
                 <div className='tree-partners'>
-                    <PersonCard
-                        person={person}
+                        <PersonCard
+                            person={person}
                         onAddChild={openAddChildModal}
                         onDelete={deletePerson}
-                    />
+                        />
+                        {hasPartner && (
+                        <div className='partner-connector-wrapper'>
+                            <div className='partner-line'></div>
+                                <div className='partner-connector'>❤️</div>
+                        </div>
+                    )}
                     {hasPartner && (
-                        <>
-                            <div className='partner-connector'>❤️</div>
-                            <PersonCard
-                                person={person.partner}
-                                isPartner
-                                onDelete={deletePerson}
-                            />
-                        </>
+                                <PersonCard
+                                    person={person.partner}
+                                    isPartner
+                            onDelete={deletePerson}
+                        />
                     )}
                 </div>
-                {hasChildren && (
-                    <button onClick={() => toggleExpand(person.id)} className='collapse-toggle mt-2'>
-                        {isExpanded ? 'Collapse Children' : 'Expand Children'}
-                    </button>
+                {hasChildren && isExpanded && (
+                    <svg
+                        className='tree-connector-svg'
+                        width='100%'
+                        height='70'
+                        style={{ position: 'absolute', left: 0, right: 0, top: 'calc(100% - 10px)', pointerEvents: 'none', zIndex: 1 }}
+                    >
+                        <defs>
+                            <linearGradient id='connector-gradient' x1='0%' y1='0%' x2='100%' y2='0%'>
+                                <stop offset='0%' stopColor='#60a5fa' />
+                                <stop offset='100%' stopColor='#818cf8' />
+                            </linearGradient>
+                            <filter id='connector-shadow' x='-20%' y='-20%' width='140%' height='140%'>
+                                <feDropShadow dx='0' dy='2' stdDeviation='2' floodColor='#60a5fa' floodOpacity='0.18' />
+                            </filter>
+                        </defs>
+                        {children.map((child, idx) => {
+                            const childCount = children.length;
+                            const spacing = 100 / (childCount + 1);
+                            const childX = spacing * (idx + 1);
+                            return (
+                                <path
+                                    key={child.id}
+                                    d={`M50 10 C50 40, ${childX} 20, ${childX} 70`}
+                                    stroke='url(#connector-gradient)'
+                                    strokeWidth='4'
+                                    fill='none'
+                                    filter='url(#connector-shadow)'
+                                    opacity='0.95'
+                                />
+                            );
+                        })}
+                    </svg>
                 )}
+                    {hasChildren && (
+                    <button onClick={() => toggleExpand(person.id)} className='collapse-toggle mt-2'>
+                            {isExpanded ? 'Collapse Children' : 'Expand Children'}
+                        </button>
+                    )}
                 {isExpanded && hasChildren && (
-                    <div className='tree-children'>
-                        {children.map(child => (
+                            <div className='tree-children'>
+                                {children.map(child => (
                             <div className='tree-child' key={child.id}>
-                                {renderNode(child)}
+                                        {renderNode(child)}
+                                    </div>
+                                ))}
                             </div>
-                        ))}
-                    </div>
                 )}
             </div>
         );

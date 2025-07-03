@@ -92,31 +92,40 @@ const PersonCard = ({ person, onAddChild, onDelete, isPartner = false, expanded,
                 <div className="person-deceased-note">🕊 Deceased</div>
             )}
 
-            <label className="person-details">
-                <strong>Gender:</strong>
-                <select value={gender} onChange={handleGenderChange} className="gender-select">
-                    <option value="">Unknown</option>
-                    <option value="male">♂️ Male</option>
-                    <option value="female">♀️ Female</option>
-                    <option value="other">⚧️ Other</option>
-                </select>
-            </label>
-
-            <div className="person-details">
-                <strong>Relationship:</strong> {getRelationship()}
+            <div className="person-details-row">
+                <span className="person-details-label">Gender:</span>
+                <span className="person-details-value">
+                    <select value={gender} onChange={handleGenderChange} className="gender-select">
+                        <option value="">Unknown</option>
+                        <option value="male">♂️ Male</option>
+                        <option value="female">♀️ Female</option>
+                        <option value="other">⚧️ Other</option>
+                    </select>
+                </span>
             </div>
-
+            <div className="person-details-row">
+                <span className="person-details-label">Relationship:</span>
+                <span className="person-details-value">{getRelationship()}</span>
+            </div>
             {person.birthDate && (
                 <>
-                    <div className="person-details"><strong>Born:</strong> {person.birthDate}</div>
+                    <div className="person-details-row">
+                        <span className="person-details-label">Born:</span>
+                        <span className="person-details-value">{person.birthDate}</span>
+                    </div>
                     {person.deathDate ? (
-                        <div className="person-details"><strong>Died:</strong> {person.deathDate}</div>
+                        <div className="person-details-row">
+                            <span className="person-details-label">Died:</span>
+                            <span className="person-details-value">{person.deathDate}</span>
+                        </div>
                     ) : (
-                        <div className="person-details"><strong>Age:</strong> {calculateAge(person.birthDate)}</div>
+                        <div className="person-details-row">
+                            <span className="person-details-label">Age:</span>
+                            <span className="person-details-value">{calculateAge(person.birthDate)}</span>
+                        </div>
                     )}
                 </>
             )}
-
 
             <label htmlFor={`upload-${person.id}`} className="person-details">
                 <strong>Upload Image:</strong>

@@ -7,7 +7,7 @@ export const buildFamilyTree = (persons, relationships) => {
         console.error('Expected an array of relationships in buildFamilyTree, got:', relationships);
         return [];
     }
-
+    
     const peopleMap = {};
     const roots = [];
     const assignedAsPartner = new Set();
@@ -28,7 +28,7 @@ export const buildFamilyTree = (persons, relationships) => {
             p1.partner = p2;
             p2.partner = p1;
             assignedAsPartner.add(p2.id);
-        }
+            }
     });
 
     persons.forEach(person => {
