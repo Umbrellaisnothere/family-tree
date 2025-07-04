@@ -218,6 +218,8 @@
     padding: 10px 1vw;
     font-size: 0.98rem;
     box-sizing: border-box;
+    margin-left: 0;
+    margin-right: 0;
   }
   .person-image {
     width: 64px;
