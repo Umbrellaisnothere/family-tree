@@ -78,15 +78,20 @@
 }
 
 .person-card.deceased {
-  background: linear-gradient(135deg, #e0e7ef 0%, #cbd5e1 100%);
-  color: #ccc;
-  border: 2px dashed #aaa;
-  opacity: 0.85;
+  background: #f3f4f6;
+  border-left: 5px solid #a3a3a3;
+  color: #6b7280;
 }
 
 .person-card.deceased .person-image {
   filter: grayscale(100%);
-  border: 2px solid #999;
+  border: 2px solid #a3a3a3;
+}
+
+.person-card.deceased .person-name,
+.person-card.deceased .person-details-label,
+.person-card.deceased .person-details-value {
+  color: #6b7280;
 }
 
 .person-deceased-note {

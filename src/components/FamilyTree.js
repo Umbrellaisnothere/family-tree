@@ -201,13 +201,13 @@ const FamilyTree = ({ family = [], isRoot = true }) => {
                         </button>
                     )}
                 {isExpanded && hasChildren && (
-                            <div className='tree-children'>
-                                {children.map(child => (
+                    <div className='tree-children'>
+                        {children.map(child => (
                             <div className='tree-child' key={child.id}>
-                                        {renderNode(child)}
-                                    </div>
-                                ))}
+                                {renderNode(child)}
                             </div>
+                        ))}
+                    </div>
                 )}
             </div>
         );
