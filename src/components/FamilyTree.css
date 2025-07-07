@@ -201,10 +201,13 @@ html, body {
 
 .family-tree-container {
     text-align: center;
-    width: 80vw;
+    width: 50vw;
+    max-width: 50vw;
+    min-width: 320px;
     min-height: 100vh;
     height: 100vh;
-    margin: 0;
+    margin-left: auto;
+    margin-right: auto;
     padding: 0;
     background: #f8fafc;
     display: flex;
@@ -213,6 +216,14 @@ html, body {
     justify-content: flex-start;
     box-sizing: border-box;
     overflow-x: hidden;
+}
+
+@media (max-width: 768px) {
+    .family-tree-container {
+        width: 100vw;
+        max-width: 100vw;
+        min-width: 0;
+    }
 }
 
 .family-tree {
@@ -405,16 +416,16 @@ html, body {
     box-shadow: 0 6px 32px rgba(30,64,175,0.08), 0 1.5px 6px rgba(0,0,0,0.04);
     margin-bottom: 36px;
     padding: 32px 24px 24px 24px;
-    max-width: 700px;
+    max-width: 1400px;
     width: 100%;
     transition: box-shadow 0.2s, transform 0.2s;
     animation: fadeIn 0.7s cubic-bezier(.4,0,.2,1);
 }
 
-.tree-node:hover {
+/* .tree-node:hover {
     box-shadow: 0 12px 48px rgba(30,64,175,0.13), 0 2px 8px rgba(0,0,0,0.06);
     transform: translateY(-2px) scale(1.01);
-}
+} */
 
 .tree-partners {
     display: flex;
@@ -753,5 +764,13 @@ html, body {
   .tree-children, .tree-child {
     gap: 1px;
     margin-top: 1px;
+  }
+}
+
+@media (max-width: 700px) {
+  .tree-node {
+    max-width: 98vw;
+    width: 98vw;
+    padding: 10px 1vw;
   }
 }

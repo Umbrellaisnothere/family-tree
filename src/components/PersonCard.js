@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import './PersonCard.css';
 
 const calculateAge = (birthDate, deathDate) => {
@@ -9,7 +9,6 @@ const calculateAge = (birthDate, deathDate) => {
     if (month < birth.getMonth() || (month === birth.getMonth() && death.getDate() < birth.getDate())) {
         age--;
     }
-
     return age;
 };
 
@@ -18,25 +17,25 @@ const PersonCard = ({ person, onAddChild, onDelete, isPartner = false, expanded,
     const [gender, setGender] = useState(person.gender || '');
     const [uploading, setUploading] = useState(false);
     const [uploadMessage, setUploadMessage] = useState('');
+    const [imgLoading, setImgLoading] = useState(true);
+    const [menuOpen, setMenuOpen] = useState(false);
+    const menuRef = useRef(null);
 
     const handleImageUpload = async (event) => {
         const file = event.target.files[0];
         if (file) {
             const imageURL = URL.createObjectURL(file);
             setImage(imageURL);
-
+            setImgLoading(true);
             const formData = new FormData();
             formData.append('image', file);
-
             try {
                 setUploading(true);
                 const response = await fetch(`http://localhost:5000/api/family/${person.id}/image`, {
                     method: 'PATCH',
                     body: formData,
                 });
-
                 if (!response.ok) throw new Error('Failed to upload image');
-
                 setUploadMessage('Image uploaded successfully');
             } catch (error) {
                 console.error('Error uploading image:', error);
@@ -51,7 +50,6 @@ const PersonCard = ({ person, onAddChild, onDelete, isPartner = false, expanded,
     const handleGenderChange = async (e) => {
         const newGender = e.target.value;
         setGender(newGender);
-
         try {
             const response = await fetch(`http://localhost:5000/api/person/${person.id}/gender`, {
                 method: 'PATCH',
@@ -60,11 +58,9 @@ const PersonCard = ({ person, onAddChild, onDelete, isPartner = false, expanded,
                 },
                 body: JSON.stringify({ gender: newGender }),
             });
-
             if (!response.ok) {
                 throw new Error('Failed to update gender');
             }
-
             const updatedPerson = await response.json();
             console.log('Gender updated successfully:', updatedPerson);
         } catch (error) {
@@ -79,19 +75,37 @@ const PersonCard = ({ person, onAddChild, onDelete, isPartner = false, expanded,
         return 'N/A';
     };
 
+    const handleMenuToggle = (e) => {
+        e.stopPropagation();
+        setMenuOpen((open) => !open);
+    };
+    const handleMenuClose = (e) => {
+        if (menuRef.current && !menuRef.current.contains(e.target)) {
+            setMenuOpen(false);
+        }
+    };
+    React.useEffect(() => {
+        if (menuOpen) {
+            document.addEventListener('mousedown', handleMenuClose);
+        } else {
+            document.removeEventListener('mousedown', handleMenuClose);
+        }
+        return () => document.removeEventListener('mousedown', handleMenuClose);
+    }, [menuOpen]);
+
     return (
-        <div id={`person-${person.id}`} className={`person-card ${gender} ${person.deathDate ? 'deceased' : ''}`}>
+        <div id={`person-${person.id}`} className={`person-card ${gender} ${person.deathDate ? 'deceased' : ''}`} style={{ position: 'relative' }}>
             <img
                 src={image || 'default-avatar.png'}
                 alt={person.name}
-                className='person-image'
-                onError={(e) => { e.target.onerror = null; e.target.src = '/default-avatar.png' }} />
+                className={`person-image${imgLoading ? ' loading' : ''}`}
+                onLoad={() => setImgLoading(false)}
+                onError={(e) => { e.target.onerror = null; e.target.src = '/default-avatar.png'; setImgLoading(false); }}
+            />
             <div className="person-name">{person.name}</div>
-
             {person.deathDate && (
                 <div className="person-deceased-note">🕊 Deceased</div>
             )}
-
             <div className="person-details-row">
                 <span className="person-details-label">Gender:</span>
                 <span className="person-details-value">
@@ -126,7 +140,6 @@ const PersonCard = ({ person, onAddChild, onDelete, isPartner = false, expanded,
                     )}
                 </>
             )}
-
             <label htmlFor={`upload-${person.id}`} className="person-details">
                 <strong>Upload Image:</strong>
             </label>
@@ -138,28 +151,18 @@ const PersonCard = ({ person, onAddChild, onDelete, isPartner = false, expanded,
                 className="person-details"
                 disabled={uploading}
             />
-
             {uploading && <div className="uploading">Uploading...</div>}
             {uploadMessage && <div className="upload-message">{uploadMessage}</div>}
 
-            <div className="card-actions">
-                <button
-                    onClick={() => onAddChild(person.id)}
-                    className='card-btn'
-                    disabled={!!person.deathDate}
-                >
-                    ➕&nbsp;Add Child
-                </button>
-                <button
-                    onClick={() => onDelete(person.id, person.parentId)}
-                    className='card-btn delete'
-                    disabled={!!person.deathDate}
-                >
-                    🗑&nbsp;Delete
-                </button>
-            </div>
-
-
+            <button className="card-menu-btn settings-btn small-settings" onClick={handleMenuToggle} aria-label="Open settings menu" type="button">
+                ⚙️
+            </button>
+            {menuOpen && (
+                <div className="card-menu card-menu-bottom" ref={menuRef}>
+                    <button className="card-btn" onClick={() => { setMenuOpen(false); onAddChild(person.id); }} disabled={!!person.deathDate}>➕ Add Child</button>
+                    <button className="card-btn delete" onClick={() => { setMenuOpen(false); onDelete(person.id, person.parentId); }} disabled={!!person.deathDate}>🗑 Delete</button>
+                </div>
+            )}
         </div>
     );
 };
