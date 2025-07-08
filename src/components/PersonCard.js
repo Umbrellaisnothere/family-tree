@@ -140,17 +140,19 @@ const PersonCard = ({ person, onAddChild, onDelete, isPartner = false, expanded,
                     )}
                 </>
             )}
-            <label htmlFor={`upload-${person.id}`} className="person-details">
-                <strong>Upload Image:</strong>
-            </label>
-            <input
-                id={`upload-${person.id}`}
-                type="file"
-                accept="image/*"
-                onChange={handleImageUpload}
-                className="person-details"
-                disabled={uploading}
-            />
+            <div className="person-details-row upload-row">
+                <span className="person-details-label upload-label">Upload Image:</span>
+                <span className="person-details-value upload-value">
+                    <input
+                        id={`upload-${person.id}`}
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        className="person-details"
+                        disabled={uploading}
+                    />
+                </span>
+            </div>
             {uploading && <div className="uploading">Uploading...</div>}
             {uploadMessage && <div className="upload-message">{uploadMessage}</div>}
 

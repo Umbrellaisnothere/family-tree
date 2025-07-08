@@ -84,6 +84,36 @@
   font-size: 1.05rem;
   margin-bottom: 5px;
   display: block;
+  padding: 0;
+}
+
+@media (max-width: 768px) {
+  .person-details {
+    font-size: 0.85rem;
+    margin-bottom: 3px;
+    padding: 0;
+  }
+}
+@media (max-width: 425px) {
+  .person-details {
+    font-size: 0.75rem;
+    margin-bottom: 2px;
+    padding: 0;
+  }
+}
+@media (max-width: 375px) {
+  .person-details {
+    font-size: 0.7rem;
+    margin-bottom: 1px;
+    padding: 0;
+  }
+}
+@media (max-width: 320px) {
+  .person-details {
+    font-size: 0.65rem;
+    margin-bottom: 1px;
+    padding: 0;
+  }
 }
 
 .person-card .death {
@@ -380,4 +410,50 @@
 .card-menu.card-menu-bottom {
   right: 10px;
   bottom: 44px;
+}
+
+.person-card, .tree-node {
+  max-width: 340px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+@media (max-width: 400px) {
+  .person-card, .tree-node {
+    max-width: 98vw;
+  }
+}
+
+.person-details-row.upload-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  gap: 10px;
+  width: 100%;
+}
+.person-details-label.upload-label {
+  min-width: 90px;
+  text-align: right;
+  font-weight: 600;
+  color: #334155;
+  font-size: 1.05rem;
+  max-width: 40%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.person-details-value.upload-value {
+  flex: 1;
+  text-align: left;
+  font-size: 1.05rem;
+  color: #475569;
+  max-width: 60%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  word-break: break-word;
+}
+.person-details-value.upload-value input[type="file"] {
+  font-size: 1em;
+  width: 100%;
 }
