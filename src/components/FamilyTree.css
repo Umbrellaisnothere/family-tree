@@ -218,14 +218,6 @@ html, body {
     overflow-x: hidden;
 }
 
-@media (max-width: 768px) {
-    .family-tree-container {
-        width: 100vw;
-        max-width: 100vw;
-        min-width: 0;
-    }
-}
-
 .family-tree {
     display: flex;
     flex-direction: column;
@@ -786,6 +778,54 @@ html, body {
   }
 }
 
+
+
+@media (max-width: 768px) {
+  .family-tree-container {
+    width: 100vw;
+    max-width: 100vw;
+    min-width: 0;
+  }
+  .tree-node, .person-card {
+    width: 50vw;
+    max-width: 50vw;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 10px 0;
+    position: relative;
+  }
+  .card-menu-btn.settings-btn.small-settings {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    z-index: 30;
+  }
+  .person-details-row.upload-row {
+    margin-bottom: 4px;
+  }
+}
+@media (max-width: 425px) {
+  .tree-node, .person-card {
+    max-width: 86vw;
+    width: 86vw;
+    padding: 8px 2vw;
+  }
+}
+@media (max-width: 375px) {
+  .tree-node, .person-card {
+    max-width: 82vw;
+    width: 82vw;
+    padding: 6px 1vw;
+  }
+}
+@media (max-width: 320px) {
+  .tree-node, .person-card {
+    max-width: 90vw;
+    width: 80vw;
+    padding: 4px 1vw;
+  }
+}
+
 .card-menu-btn.settings-btn.small-settings {
   background: #fff;
   color: #1e293b;
@@ -806,12 +846,7 @@ html, body {
 
 @media (max-width: 768px) {
   .tree-node, .person-card {
-    max-width: 90vw;
-    width: 90vw;
-    padding: 10px 2vw;
     font-size: 0.82rem;
-    margin-left: auto;
-    margin-right: auto;
   }
   .person-details-label, .person-details-value {
     font-size: 0.82rem;
@@ -819,12 +854,7 @@ html, body {
 }
 @media (max-width: 425px) {
   .tree-node, .person-card {
-    max-width: 86vw;
-    width: 86vw;
-    padding: 8px 2vw;
     font-size: 0.75rem;
-    margin-left: auto;
-    margin-right: auto;
   }
   .person-details-label, .person-details-value {
     font-size: 0.75rem;
@@ -832,12 +862,7 @@ html, body {
 }
 @media (max-width: 375px) {
   .tree-node, .person-card {
-    max-width: 82vw;
-    width: 82vw;
-    padding: 6px 1vw;
     font-size: 0.7rem;
-    margin-left: auto;
-    margin-right: auto;
   }
   .person-details-label, .person-details-value {
     font-size: 0.7rem;
@@ -845,12 +870,7 @@ html, body {
 }
 @media (max-width: 320px) {
   .tree-node, .person-card {
-    max-width: 80vw;
-    width: 80vw;
-    padding: 4px 1vw;
     font-size: 0.65rem;
-    margin-left: auto;
-    margin-right: auto;
   }
   .person-details-label, .person-details-value {
     font-size: 0.65rem;
